@@ -133,69 +133,14 @@ public class SampleAuthCPA extends DefaultApplicationPlugin implements PluginWeb
             System.out.println("Invalid JWT or decoding error: " + e.getMessage());
         }
     }
-    
-    private void callAPI() {
-        try {
-            // API URL
-            String apiUrl = "http://localhost:9090/generate-token";
-
-            LogUtil.info(getClassName(), "baseURL=" + "http://localhost:8081");
-            // JSON payload
-            Map<String, String> payload = new HashMap<>();
-            payload.put("baseUrl", "http://localhost:8081");
-            payload.put("username", "user");
-            payload.put("password", "test123");
-
-            // Serialize to JSON
-            ObjectMapper mapper;
-            mapper = new ObjectMapper();
-            String json = mapper.writeValueAsString(payload);
-
-            // Setup connection
-            URL url = new URL(apiUrl);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("POST");
-            conn.setDoOutput(true);
-            conn.setRequestProperty("Content-Type", "application/json");
-
-            // Send request
-            try (OutputStream os = conn.getOutputStream()) {
-                os.write(json.getBytes());
-                os.flush();
-            }
-
-            int responseCode = conn.getResponseCode();
-            LogUtil.info(getClassName(), "API Response Code: " + responseCode);
-
-            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            String inputLine;
-            StringBuilder response = new StringBuilder();
-
-            while ((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
-            }
-            in.close();
-
-            LogUtil.info(getClassName(), "API Response: " + response.toString());
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     @Override
     public Object execute(Map properties) {
-        callAPI();
         return null;
     }
 
     @Override
     public void webService(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String login = request.getParameter("login");
-        if ("0".equals(login)) {
-            callAPI();
-            return;
-        }
 
         LogUtil.info(this.getClassName(), "test");
         DirectoryManagerProxyImpl dm = (DirectoryManagerProxyImpl) AppUtil.getApplicationContext().getBean("directoryManager");
@@ -289,7 +234,6 @@ public class SampleAuthCPA extends DefaultApplicationPlugin implements PluginWeb
             } else {
                 savedUrl = request.getContextPath();
             }
-            WorkflowUtil.getHttpServletResponse();
             response.sendRedirect(savedUrl);
         } catch (IOException | RuntimeException ex) {
             LogUtil.error(getClass().getName(), ex, "Error in custom login");
