@@ -39,7 +39,6 @@ import org.joget.directory.dao.RoleDao;
 import org.joget.directory.dao.UserDao;
 import org.joget.directory.ext.DirectoryManagerAuthenticatorImpl;
 import org.joget.directory.model.Role;
-import org.joget.directory.model.service.DirectoryManager;
 import org.joget.directory.model.service.DirectoryManagerAuthenticator;
 import org.joget.directory.model.service.DirectoryManagerProxyImpl;
 import org.joget.plugin.base.PluginManager;
@@ -169,6 +168,11 @@ public class SampleAuthCPA extends DefaultApplicationPlugin implements PluginWeb
         
         decodeJwt(token, secretKey);
         
+        if (username == null) {
+            response.sendRedirect(request.getContextPath() + "/web/login?login_error=1");
+            return;
+        }
+
         user = dm.getUserByUsername(username);
         if (user == null && userProvisioningEnabled) {
 
@@ -199,10 +203,9 @@ public class SampleAuthCPA extends DefaultApplicationPlugin implements PluginWeb
             // verify license
             PluginManager pluginManager = (PluginManager) AppUtil.getApplicationContext().getBean("pluginManager");
             DirectoryManagerAuthenticator authenticator = (DirectoryManagerAuthenticator) pluginManager.getPlugin(DirectoryManagerAuthenticatorImpl.class.getName());
-            DirectoryManager wrapper = new DirectoryManagerWrapper(dm, true);
             boolean authenticated = false;
             if (user != null) {
-                authenticated = authenticator.authenticate(wrapper, user.getUsername(), user.getPassword());
+                authenticated = authenticator.authenticate(dm, user.getUsername(), user.getPassword());
             }
             LogUtil.info(getClassName(), "Authenticated:" + authenticated);
             // get authorities
