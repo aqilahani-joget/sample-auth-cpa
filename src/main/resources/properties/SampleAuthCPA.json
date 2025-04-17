@@ -1,0 +1,60 @@
+[
+    {
+        "title": "@@title.sampleauth.details@@",
+        "properties": [
+            {
+                "name": "callbackUrl",
+                "label": "@@properties.callback.url@@",
+                "type": "label",
+                "value": "%s",
+                "description": "Provide this Callback URL to your Open ID service."
+            },
+            {
+                "name": "secretKey",
+                "label": "@@properties.client.secret@@",
+                "type": "password",
+                "value": "",
+                "required": "true"
+            },
+            {
+                "name": "userProvisioning",
+                "label": "@@properties.user.provision@@",
+                "type": "checkbox",
+                "value": "true",
+                "options": [
+                    {
+                        "value": "true",
+                        "label": ""
+                    }
+                ]
+            },
+            {
+                "name": "saveAccessToken",
+                "label": "@@properties.user.save.access.token@@",
+                "type": "checkbox",
+                "value": "true",
+                "options": [
+                    {
+                        "value": "true",
+                        "label": ""
+                    }
+                ],
+                "description": "Include offline_access in scope for saving refresh token into user meta"
+            }
+        ]
+    },
+    %s,
+            {
+                "title": "@@app.edm.label.addonDirectorManager@@",
+                "properties": [
+                    {
+                        "name": "dm1",
+                        "label": "@@app.edm.label.addon@@",
+                        "type": "elementselect",
+                        "options_ajax": "[CONTEXT_PATH]/web/json/plugin/org.joget.plugin.directory.SecureDirectoryManager/service",
+                        "url": "[CONTEXT_PATH]/web/property/json/getPropertyOptions"
+                    }
+                    %s
+                ]
+            }
+]
